@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenHOI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#00CFFD',
+                        accent: '#7B61FF',
+                        dark: '#0F172A',
+                        darker: '#0A0F1C',
+                        light: '#E2E8F0'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 0 15px rgba(22, 93, 255, 0.6);
+            }
+            .bg-grid {
+                background-image: 
+                    linear-gradient(rgba(22, 93, 255, 0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(22, 93, 255, 0.05) 1px, transparent 1px);
+                background-size: 30px 30px;
+            }
+            .section-fade {
+                opacity: 0;
+                transform: translateY(20px);
+                transition: opacity 0.8s ease, transform 0.8s ease;
+            }
+            .section-fade.active {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            
+            /* 3D Demo Carousel Styles */
+            .demo-carousel {
+                perspective: 1000px;
+                height: 400px;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .carousel-container {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform-style: preserve-3d;
+                transition: transform 0.8s ease-in-out;
+            }
+            
+            .carousel-item {
+                position: absolute;
+                width: 300px;
+                height: 400px;
+                margin: 5 10px;
+                border-radius: 12px;
+                overflow: hidden;
+                cursor: pointer;
+                transition: all 0.5s ease;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            }
+            
+            .carousel-item video {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                background-color: #000;
+            }
+            
+            .carousel-item .overlay {
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(45deg, rgba(22, 93, 255, 0.1), rgba(0, 207, 253, 0.1));
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: bold;
+                text-align: center;
+                padding: 20px;
+            }
+            
+            .carousel-item:hover .overlay {
+                opacity: 1;
+            }
+            .gradient-bg {
+                background: linear-gradient(135deg, #0A0F1C 0%, #131F3A 50%, #0A0F1C 100%);
+            }
+        }
+    </style>
+</head>
+<body class="gradient-bg text-light overflow-x-hidden font-sans">
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-darker/80 backdrop-blur-md border-b border-primary/20">
+        <div class="max-w-6xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo/项目名称 -->
+                <div class="text-xl font-bold text-primary">
+                    OpenHOI
+                </div>
+                
+                <!-- 导航菜单 -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#hero" class="text-light/80 hover:text-primary transition-colors duration-300">Project</a>
+                    <a href="#introduction" class="text-light/80 hover:text-primary transition-colors duration-300">Introduction</a>
+                    <a href="#demo" class="text-light/80 hover:text-primary transition-colors duration-300">Demo</a>
+                    <a href="#annotation-tool" class="text-light/80 hover:text-primary transition-colors duration-300">Annotation Tool</a>
+                </div>
+                
+                <!-- 移动端菜单按钮 -->
+                <button id="mobile-menu-btn" class="md:hidden text-light/80 hover:text-primary transition-colors">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- 移动端菜单 -->
+            <div id="mobile-menu" class="md:hidden mt-4 pb-4 border-t border-primary/20 hidden">
+                <div class="flex flex-col space-y-4 pt-4">
+                    <a href="#hero" class="text-light/80 hover:text-primary transition-colors duration-300">Project</a>
+                    <a href="#introduction" class="text-light/80 hover:text-primary transition-colors duration-300">Introduction</a>
+                    <a href="#demo" class="text-light/80 hover:text-primary transition-colors duration-300">Demo</a>
+                    <a href="#annotation-tool" class="text-light/80 hover:text-primary transition-colors duration-300">Annotation Tool</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- 视频背景首屏 -->
+    <header id="hero" class="relative h-screen flex items-center justify-center overflow-hidden pt-20">
+        <!-- 图片背景 -->
+        <div class="absolute inset-0 z-0">
+            <div class="w-full h-full bg-center bg-no-repeat flex items-center justify-center" style="background: linear-gradient(135deg, #0A0F1C 0%, #131F3A 30%, #1E293B 70%, #0A0F1C 100%);">
+                <img src="static/page1.png" alt="Hero Image" class="max-w-[70%] max-h-[70%] object-contain">
+            </div>
+            </div>
+            <!-- 图片上方的渐变遮罩 - 增强标题可读性并强化科技感 -->
+            <div class="absolute inset-0 bg-gradient-to-b from-darker/50 via-transparent to-darker/70"></div>
+        </div>
+        
+        <!-- 标题和作者信息 -->
+        <div class="relative z-10 text-center px-4 max-w-5xl mx-auto">
+            <h1 class="text-[clamp(2rem,5vw,4rem)] font-bold mb-6 leading-tight text-shadow bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+                In-the-Wild Human-Object Interaction Motion Annotation
+            </h1>
+<!--            <p class="text-[clamp(1.1rem,2vw,1.5rem)] mb-8 text-light/90">-->
+<!--                副标题：简洁描述研究内容和贡献-->
+<!--            </p>-->
+            <div class="flex flex-wrap justify-center gap-4 text-light/80">
+                <span>Boran Wen, Ye Lu, Keyan Wan, Yong-Lu Li</span>
+                <span>•</span>
+                <span>Shanghai Jiao Tong University</span>
+                <span>•</span>
+                <span>2025.7</span>
+            </div>
+        </div>
+        
+        <!-- 明显的向下按钮 - 带点击功能 -->
+        <button id="scroll-down" class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10 group">
+            <div class="w-12 h-12 rounded-full border-2 border-primary/70 flex items-center justify-center group-hover:bg-primary/10 transition-all duration-300">
+                <i class="fa fa-chevron-down text-primary text-xl group-hover:text-secondary group-hover:translate-y-1 transition-all duration-300"></i>
+            </div>
+        </button>
+        
+        <!-- 底部装饰线 - 强化首屏与内容区的分割感 -->
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent z-10"></div>
+    </header>
+
+    <!-- 主要内容区域 - 与首屏有明显视觉分割 -->
+    <main class="relative z-20">
+        <!-- Introduction部分 -->
+        <section id="introduction" class="py-20 px-4 section-fade">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex items-center mb-10">
+                    <div class="h-px bg-gradient-to-r from-transparent to-primary flex-grow"></div>
+                    <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold mx-6 text-primary">Introduction</h2>
+                    <div class="h-px bg-gradient-to-l from-transparent to-primary flex-grow"></div>
+                </div>
+                
+                <div class="grid md:grid-cols-5 gap-10 items-center">
+                    <div class="md:col-span-3">
+                        <p class="text-lg mb-6 leading-relaxed">
+                                In this work, we aim to annotate open-world, open-semantic human interactions with the lowest possible cost for the entire annotation process. 
+                            We initially reconstruct people, objects, and spatial relationships using state-of-the-art 3D reconstruction tools. 
+                            Subsequently, we employ our designed keypoint annotation system for click-based interactive annotation and utilize our HOISolver system to optimize and obtain the complete reconstruction results. 
+                            We hope to collect various interaction video data across different object categories to provide a data foundation for us.
+                        </p>
+                        <p class="text-lg mb-6 leading-relaxed">
+                                Our previous work focuses on image-level human-object interaction annotation, which is accepted at CVPR 2025. Our new work is still on progress, we will release our tools and data in the future.
+                        </p>
+                        <!-- <div class="flex flex-wrap gap-4 mt-8">
+                            <a href="#" class="inline-flex items-center px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 rounded-lg transition-all duration-300">
+                                <i class="fa fa-file-pdf-o mr-2"></i> Paper
+                            </a>
+                            <a href="#" class="inline-flex items-center px-6 py-3 bg-dark hover:bg-dark/80 text-light border border-light/20 rounded-lg transition-all duration-300">
+                                <i class="fa fa-github mr-2"></i> Code
+                            </a>
+                        </div> -->
+                    </div>
+                    <div class="md:col-span-2 bg-dark/50 p-6 rounded-xl border border-primary/20 shadow-lg shadow-primary/5 transform hover:scale-[1.02] transition-transform duration-500">
+                        <div class="aspect-square bg-gradient-to-br from-dark to-darker rounded-lg overflow-hidden relative">
+                            <!-- 示例图 -->
+                            <img src="https://picsum.photos/id/1/600/600" alt="研究示意图" class="w-full h-full object-cover mix-blend-luminosity hover:mix-blend-normal transition-all duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-dark/80 to-transparent flex items-end p-6">
+                                <!-- <p class="text-sm text-light/80">研究方法示意图：展示核心创新点</p> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 3DHOI和4DHOI分类展示 - 单独一行 -->
+                <div class="grid md:grid-cols-2 gap-8 mt-16">
+                    <!-- 3DHOI部分 -->
+                    <div class="bg-dark/30 rounded-xl p-6 border border-primary/20">
+                        <h3 class="text-xl font-semibold mb-4 text-secondary flex items-center">
+                            <span class="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                            3DHOI (Image-level)
+                        </h3>
+                        <p class="text-light/70 mb-6 text-sm">
+                            Our CVPR 2025 accepted work focuses on image-level human-object interaction annotation with efficient 3D reconstruction.
+                        </p>
+                        <div class="flex flex-wrap gap-3">
+                            <a href="https://arxiv.org/abs/2503.15898" target="_blank" class="inline-flex items-center px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 rounded-lg text-sm transition-all duration-300">
+                                <i class="fa fa-file-pdf-o mr-2"></i> Paper
+                            </a>
+                            <a href="https://github.com/wenboran2002/open-3dhoi" target="_blank" class="inline-flex items-center px-4 py-2 bg-dark hover:bg-dark/80 text-light border border-light/20 rounded-lg text-sm transition-all duration-300">
+                                <i class="fa fa-github mr-2"></i> Code
+                            </a>
+                            <a href="https://huggingface.co/datasets/acane2/Open3DHOI" target="_blank" class="inline-flex items-center px-4 py-2 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 rounded-lg text-sm transition-all duration-300">
+                                <i class="fa fa-database mr-2"></i> Data
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- 4DHOI部分 -->
+                    <div class="bg-dark/30 rounded-xl p-6 border border-accent/20">
+                        <h3 class="text-xl font-semibold mb-4 text-accent flex items-center">
+                            <span class="w-2 h-2 bg-accent rounded-full mr-3"></span>
+                            4DHOI (Video-level)
+                        </h3>
+                        <p class="text-light/70 mb-6 text-sm">
+                            Our ongoing work on video-level human-object interaction motion annotation with temporal dynamics and 4D reconstruction.
+                        </p>
+                        <div class="flex flex-wrap gap-3">
+                            <div class="inline-flex items-center px-4 py-2 bg-accent/10 text-accent/60 border border-accent/20 rounded-lg text-sm cursor-not-allowed">
+                                <i class="fa fa-file-pdf-o mr-2"></i> Coming Soon
+                            </div>
+                            <div class="inline-flex items-center px-4 py-2 bg-dark/50 text-light/40 border border-light/10 rounded-lg text-sm cursor-not-allowed">
+                                <i class="fa fa-github mr-2"></i> Coming Soon
+                            </div>
+                            <div class="inline-flex items-center px-4 py-2 bg-secondary/10 text-secondary/60 border border-secondary/20 rounded-lg text-sm cursor-not-allowed">
+                                <i class="fa fa-database mr-2"></i> Coming Soon
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Demo展示部分 -->
+        <section id="demo" class="py-20 px-4 bg-dark/30 section-fade">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex items-center mb-10">
+                    <div class="h-px bg-gradient-to-r from-transparent to-primary flex-grow"></div>
+                    <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold mx-6 text-primary">3D Demo 展示</h2>
+                    <div class="h-px bg-gradient-to-l from-transparent to-primary flex-grow"></div>
+                </div>
+                
+                <!-- 3D Demo Carousel -->
+                <div class="demo-carousel mb-12">
+                    <div class="carousel-container" id="carousel">
+                        <!-- Videos will be dynamically loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Demo Control Buttons -->
+                <div class="flex justify-center items-center gap-4 mb-8">
+                    <button id="prevBtn" class="px-6 py-3 bg-primary/20 hover:bg-primary/40 text-primary rounded-lg transition-all duration-300 flex items-center gap-2">
+                        <i class="fa fa-chevron-left"></i>
+                        Previous
+                    </button>
+                    <div class="flex gap-2" id="indicators">
+                        <!-- Indicators will be generated dynamically -->
+                    </div>
+                    <button id="nextBtn" class="px-6 py-3 bg-primary/20 hover:bg-primary/40 text-primary rounded-lg transition-all duration-300 flex items-center gap-2">
+                        Next
+                        <i class="fa fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <!-- Demo Description -->
+                <div class="bg-darker rounded-2xl p-8 border border-primary/20">
+                    <h3 class="text-2xl font-semibold mb-4 text-secondary">3D Human-Object Interaction Reconstruction</h3>
+                    <p class="text-light/80 mb-6 leading-relaxed">
+                        Experience our cutting-edge 3D reconstruction technology in action. These demonstrations showcase 
+                        real-time human-object interaction analysis, from initial video input to complete 4D scene reconstruction. 
+                        Our system captures intricate details of human motion, object dynamics, and spatial relationships with 
+                        unprecedented accuracy.
+                    </p>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="bg-dark/50 rounded-lg p-4">
+                            <div class="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-3">
+                                <i class="fa fa-cube text-primary text-xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-light mb-2">Real-time 3D</h4>
+                            <p class="text-sm text-light/70">Live reconstruction with minimal latency</p>
+                        </div>
+                        <div class="bg-dark/50 rounded-lg p-4">
+                            <div class="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center mb-3">
+                                <i class="fa fa-hand-paper-o text-secondary text-xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-light mb-2">Hand Tracking</h4>
+                            <p class="text-sm text-light/70">Precise finger and gesture recognition</p>
+                        </div>
+                        <div class="bg-dark/50 rounded-lg p-4">
+                            <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mb-3">
+                                <i class="fa fa-connectdevelop text-accent text-xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-light mb-2">Object Analysis</h4>
+                            <p class="text-sm text-light/70">Dynamic object shape and motion capture</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 数据标注工具模块 -->
+        <section id="annotation-tool" class="py-20 px-4 section-fade">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex items-center mb-10">
+                    <div class="h-px bg-gradient-to-r from-transparent to-primary flex-grow"></div>
+                    <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold mx-6 text-primary">Annotation Tools</h2>
+                    <div class="h-px bg-gradient-to-l from-transparent to-primary flex-grow"></div>
+                </div>
+                
+                <!-- 三个独立模块 -->
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- 数据上传模块 -->
+                    <div class="bg-dark/30 rounded-xl p-6 border border-primary/10 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 transform hover:-translate-y-1">
+                        <div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-5">
+                            <i class="fa fa-upload text-2xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-secondary">Data Upload</h3>
+                        <p class="text-light/70 mb-6">
+                            Upload your video data for processing and analysis. Supports multiple formats including MP4, AVI, MOV with batch upload functionality for large-scale datasets.
+                        </p>
+                        <a href="upload.html" class="inline-flex items-center px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 rounded-lg transition-all duration-300">
+                            Learn More <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- 完整重建流程体验模块 -->
+                    <div class="bg-dark/30 rounded-xl p-6 border border-primary/10 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 transform hover:-translate-y-1">
+                        <div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-5">
+                            <i class="fa fa-cogs text-2xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-secondary">Reconstruction Pipeline</h3>
+                        <p class="text-light/70 mb-6">
+                            Experience our complete 4D reconstruction pipeline from video input to final HOI annotation. Interactive demo with real-time feedback and visualization.
+                        </p>
+                        <a href="reconstruction.html" class="inline-flex items-center px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 rounded-lg transition-all duration-300">
+                            Try Demo <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- 标注工具下载模块 -->
+                    <div class="bg-dark/30 rounded-xl p-6 border border-primary/10 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 transform hover:-translate-y-1">
+                        <div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-5">
+                            <i class="fa fa-download text-2xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-secondary">Annotation Tool</h3>
+                        <p class="text-light/70 mb-6">
+                            Download our standalone annotation tool for offline use. Cross-platform support with advanced features for keypoint annotation and HOI labeling.
+                        </p>
+                        <a href="annotation-tool.html" class="inline-flex items-center px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 rounded-lg transition-all duration-300">
+                            Download <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="py-12 px-4 bg-dark border-t border-primary/10">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <p class="text-light/60 text-sm">© 2023 学术研究项目. 保留所有权利.</p>
+                </div>
+                <div class="flex gap-6">
+                    <a href="#" class="text-light/60 hover:text-primary transition-colors">
+                        <i class="fa fa-github text-xl"></i>
+                    </a>
+                    <a href="#" class="text-light/60 hover:text-primary transition-colors">
+                        <i class="fa fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-light/60 hover:text-primary transition-colors">
+                        <i class="fa fa-envelope text-xl"></i>
+                    </a>
+                    <a href="#" class="text-light/60 hover:text-primary transition-colors">
+                        <i class="fa fa-linkedin text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 处理滚动动画和向下按钮功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 移动端菜单功能
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+                const icon = mobileMenuBtn.querySelector('i');
+                if (mobileMenu.classList.contains('hidden')) {
+                    icon.className = 'fa fa-bars text-xl';
+                } else {
+                    icon.className = 'fa fa-times text-xl';
+                }
+            });
+
+            // 向下滚动按钮功能
+            const scrollDownBtn = document.getElementById('scroll-down');
+            const firstSection = document.getElementById('introduction');
+            
+            scrollDownBtn.addEventListener('click', function() {
+                firstSection.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // 监听滚动事件，实现元素进入视口时的淡入效果
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            // 监听所有带section-fade类的元素
+            document.querySelectorAll('.section-fade').forEach(section => {
+                observer.observe(section);
+            });
+            
+            // 平滑滚动到锚点
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                        // 关闭移动端菜单
+                        if (!mobileMenu.classList.contains('hidden')) {
+                            mobileMenu.classList.add('hidden');
+                            const icon = mobileMenuBtn.querySelector('i');
+                            icon.className = 'fa fa-bars text-xl';
+                        }
+                    }
+                });
+            });
+
+            // 滚动时改变导航栏样式
+            window.addEventListener('scroll', function() {
+                const nav = document.querySelector('nav');
+                if (window.scrollY > 50) {
+                    nav.classList.add('bg-darker/95');
+                    nav.classList.remove('bg-darker/80');
+                } else {
+                    nav.classList.add('bg-darker/80');
+                    nav.classList.remove('bg-darker/95');
+                }
+            });
+            
+            // 3D Demo Carousel functionality
+            initDemoCarousel();
+        });
+        
+        function initDemoCarousel() {
+            const videos = [
+                'static/demo/3d/guitar_ok.mp4',
+                'static/demo/3d/horse_ok.mp4', 
+                'static/demo/3d/chair_ok.mp4',
+                'static/demo/3d/couch_ok.mp4',
+                'static/demo/3d/cup_ok.mp4'
+            ];
+            
+            const videoNames = [
+                'Guitar Interaction',
+                'Horse Interaction',
+                'Chair Interaction', 
+                'Couch Interaction',
+                'Cup Interaction'
+            ];
+            
+            const carousel = document.getElementById('carousel');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const indicators = document.getElementById('indicators');
+            
+            let currentIndex = 0;
+            let autoRotateInterval;
+            
+            // Create video elements
+            videos.forEach((videoSrc, index) => {
+                const item = document.createElement('div');
+                item.className = 'carousel-item';
+                item.innerHTML = `
+                    <video autoplay loop muted>
+                        <source src="${videoSrc}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="overlay">
+                        <div>
+                            <div class="text-lg font-semibold mb-2">${videoNames[index]}</div>
+                            <div class="text-sm opacity-80">Click to view in detail</div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add click event for modal or detailed view
+                item.addEventListener('click', () => {
+                    // You can add modal functionality here
+                    console.log(`Clicked ${videoNames[index]}`);
+                });
+                
+                carousel.appendChild(item);
+            });
+            
+            // Create indicators
+            videos.forEach((_, index) => {
+                const indicator = document.createElement('div');
+                indicator.className = `w-3 h-3 rounded-full cursor-pointer transition-all duration-300 ${index === 0 ? 'bg-primary' : 'bg-primary/30'}`;
+                indicator.addEventListener('click', () => goToSlide(index));
+                indicators.appendChild(indicator);
+            });
+            
+            function updateCarousel() {
+                const items = carousel.querySelectorAll('.carousel-item');
+                const totalItems = items.length;
+                const radius = 250;
+                
+                items.forEach((item, index) => {
+                    const angle = ((index - currentIndex) * 360) / totalItems;
+                    const radian = (angle * Math.PI) / 180;
+                    
+                    const x = Math.sin(radian) * radius;
+                    const z = Math.cos(radian) * radius;
+                    
+                    let scale = 0.6;
+                    let opacity = 0.6;
+                    
+                    // Center item (larger)
+                    if (index === currentIndex) {
+                        scale = 1;
+                        opacity = 1;
+                    }
+                    // Adjacent items (medium)
+                    else if (Math.abs(index - currentIndex) === 1 || 
+                            (currentIndex === 0 && index === totalItems - 1) ||
+                            (currentIndex === totalItems - 1 && index === 0)) {
+                        scale = 0.8;
+                        opacity = 0.8;
+                    }
+                    
+                    item.style.transform = `translate(-50%, -50%) translate3d(${x}px, 0, ${z}px) scale(${scale})`;
+                    item.style.opacity = opacity;
+                    item.style.zIndex = z > 0 ? Math.floor(z) : 0;
+                });
+                
+                // Update indicators
+                indicators.querySelectorAll('div').forEach((indicator, index) => {
+                    indicator.className = `w-3 h-3 rounded-full cursor-pointer transition-all duration-300 ${
+                        index === currentIndex ? 'bg-primary' : 'bg-primary/30'
+                    }`;
+                });
+            }
+            
+            function goToSlide(index) {
+                currentIndex = index;
+                updateCarousel();
+                resetAutoRotate();
+            }
+            
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % videos.length;
+                updateCarousel();
+            }
+            
+            function prevSlide() {
+                currentIndex = (currentIndex - 1 + videos.length) % videos.length;
+                updateCarousel();
+            }
+            
+            function startAutoRotate() {
+                autoRotateInterval = setInterval(nextSlide, 4000);
+            }
+            
+            function resetAutoRotate() {
+                clearInterval(autoRotateInterval);
+                startAutoRotate();
+            }
+            
+            // Event listeners
+            nextBtn.addEventListener('click', () => {
+                nextSlide();
+                resetAutoRotate();
+            });
+            
+            prevBtn.addEventListener('click', () => {
+                prevSlide();
+                resetAutoRotate();
+            });
+            
+            // Pause auto-rotate on hover
+            carousel.addEventListener('mouseenter', () => clearInterval(autoRotateInterval));
+            carousel.addEventListener('mouseleave', startAutoRotate);
+            
+            // Initialize
+            updateCarousel();
+            startAutoRotate();
+        }
+    </script>
+</body>
+</html>

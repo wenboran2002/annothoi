@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Annotation Tool - OpenHOI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#00CFFD',
+                        accent: '#7B61FF',
+                        dark: '#0F172A',
+                        darker: '#0A0F1C',
+                        light: '#E2E8F0'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .gradient-bg {
+                background: linear-gradient(135deg, #0A0F1C 0%, #131F3A 50%, #0A0F1C 100%);
+            }
+        }
+    </style>
+</head>
+<body class="gradient-bg text-light overflow-x-hidden font-sans">
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-darker/95 backdrop-blur-md border-b border-primary/20">
+        <div class="max-w-6xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <a href="test.html" class="text-xl font-bold text-primary">OpenHOI</a>
+                    <span class="text-light/60">|</span>
+                    <span class="text-light/80">Annotation Tool</span>
+                </div>
+                <a href="test.html" class="text-light/80 hover:text-primary transition-colors">
+                    <i class="fa fa-arrow-left mr-2"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="pt-24 pb-12">
+        <div class="max-w-6xl mx-auto px-4">
+            <!-- 页面标题 -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+                    OpenHOI Annotation Tool
+                </h1>
+                <p class="text-xl text-light/80">
+                    Professional software for 4D human-object interaction annotation
+                </p>
+            </div>
+
+            <!-- 下载区域 -->
+            <section class="mb-12">
+                <div class="bg-dark/50 rounded-xl p-8 border border-primary/20">
+                    <h2 class="text-2xl font-semibold mb-6 text-primary">📥 Download Latest Version</h2>
+                    
+                    <div class="text-center mb-8">
+                        <div class="inline-flex items-center px-3 py-1 bg-primary/20 text-primary rounded-full text-sm mb-4">
+                            <span class="w-2 h-2 bg-primary rounded-full mr-2"></span>
+                            v2.1.0 - Latest Release
+                        </div>
+                        <p class="text-light/70">Released on January 15, 2025</p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <!-- Windows -->
+                        <div class="bg-darker/50 rounded-lg p-6 text-center">
+                            <div class="w-16 h-16 bg-primary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <i class="fa fa-windows text-primary text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-light mb-2">Windows</h3>
+                            <p class="text-sm text-light/70 mb-4">Windows 10/11 (64-bit)</p>
+                            <div class="text-sm text-light/60 mb-4">
+                                <p>Size: 245 MB</p>
+                                <p>Requirements: .NET 6.0</p>
+                            </div>
+                            <button class="w-full px-4 py-3 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors">
+                                <i class="fa fa-download mr-2"></i> Download for Windows
+                            </button>
+                        </div>
+
+                        <!-- macOS -->
+                        <div class="bg-darker/50 rounded-lg p-6 text-center">
+                            <div class="w-16 h-16 bg-secondary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <i class="fa fa-apple text-secondary text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-light mb-2">macOS</h3>
+                            <p class="text-sm text-light/70 mb-4">macOS 11.0+ (Intel & Apple Silicon)</p>
+                            <div class="text-sm text-light/60 mb-4">
+                                <p>Size: 198 MB</p>
+                                <p>Universal Binary</p>
+                            </div>
+                            <button class="w-full px-4 py-3 bg-secondary hover:bg-secondary/80 text-white rounded-lg transition-colors">
+                                <i class="fa fa-download mr-2"></i> Download for macOS
+                            </button>
+                        </div>
+
+                        <!-- Linux -->
+                        <div class="bg-darker/50 rounded-lg p-6 text-center">
+                            <div class="w-16 h-16 bg-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <i class="fa fa-linux text-accent text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-light mb-2">Linux</h3>
+                            <p class="text-sm text-light/70 mb-4">Ubuntu 20.04+, CentOS 8+</p>
+                            <div class="text-sm text-light/60 mb-4">
+                                <p>Size: 167 MB</p>
+                                <p>AppImage Format</p>
+                            </div>
+                            <button class="w-full px-4 py-3 bg-accent hover:bg-accent/80 text-white rounded-lg transition-colors">
+                                <i class="fa fa-download mr-2"></i> Download for Linux
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 源代码 -->
+                    <div class="mt-8 p-4 bg-darker/30 rounded-lg text-center">
+                        <p class="text-light/70 mb-4">Need the source code?</p>
+                        <a href="#" class="inline-flex items-center px-4 py-2 border border-primary/30 text-primary hover:bg-primary/10 rounded-lg transition-colors">
+                            <i class="fa fa-github mr-2"></i> View on GitHub
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 功能特性 -->
+            <section class="mb-12">
+                <div class="bg-dark/50 rounded-xl p-8 border border-primary/20">
+                    <h2 class="text-2xl font-semibold mb-6 text-primary">🔧 Key Features</h2>
+                    
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fa fa-mouse-pointer text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-light">Click-based Annotation</h3>
+                                <p class="text-sm text-light/70">Intuitive click-based keypoint annotation system</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fa fa-cube text-secondary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-light">3D Visualization</h3>
+                                <p class="text-sm text-light/70">Real-time 3D scene visualization and manipulation</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-accent/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fa fa-play text-accent"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-light">Timeline Control</h3>
+                                <p class="text-sm text-light/70">Frame-by-frame annotation with timeline controls</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fa fa-magic text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-light">Auto-tracking</h3>
+                                <p class="text-sm text-light/70">Automatic keypoint tracking across frames</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fa fa-save text-secondary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-light">Multiple Export</h3>
+                                <p class="text-sm text-light/70">Export to JSON, OBJ, FBX, and other formats</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-accent/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fa fa-undo text-accent"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-light">Undo/Redo</h3>
+                                <p class="text-sm text-light/70">Full undo/redo support for all operations</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 安装说明 -->
+            <section class="mb-12">
+                <div class="bg-dark/50 rounded-xl p-8 border border-primary/20">
+                    <h2 class="text-2xl font-semibold mb-6 text-primary">📋 Installation Guide</h2>
+                    
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <!-- Windows安装 -->
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4 text-secondary flex items-center">
+                                <i class="fa fa-windows mr-2"></i> Windows
+                            </h3>
+                            <ol class="space-y-2 text-sm text-light/80">
+                                <li>1. Download the .msi installer</li>
+                                <li>2. Run as administrator</li>
+                                <li>3. Follow the installation wizard</li>
+                                <li>4. Install .NET 6.0 if required</li>
+                                <li>5. Launch from Start Menu</li>
+                            </ol>
+                        </div>
+
+                        <!-- macOS安装 -->
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4 text-secondary flex items-center">
+                                <i class="fa fa-apple mr-2"></i> macOS
+                            </h3>
+                            <ol class="space-y-2 text-sm text-light/80">
+                                <li>1. Download the .dmg file</li>
+                                <li>2. Open the disk image</li>
+                                <li>3. Drag app to Applications</li>
+                                <li>4. Allow in Security preferences</li>
+                                <li>5. Launch from Applications</li>
+                            </ol>
+                        </div>
+
+                        <!-- Linux安装 -->
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4 text-secondary flex items-center">
+                                <i class="fa fa-linux mr-2"></i> Linux
+                            </h3>
+                            <ol class="space-y-2 text-sm text-light/80">
+                                <li>1. Download the AppImage</li>
+                                <li>2. Make it executable</li>
+                                <li>3. Run: chmod +x OpenHOI.AppImage</li>
+                                <li>4. Double-click to launch</li>
+                                <li>5. Optionally integrate with desktop</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 使用教程 -->
+            <section class="mb-12">
+                <div class="bg-dark/50 rounded-xl p-8 border border-primary/20">
+                    <h2 class="text-2xl font-semibold mb-6 text-primary">📚 Tutorials & Documentation</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-semibold text-secondary">Quick Start</h3>
+                            <div class="space-y-3">
+                                <a href="#" class="block p-3 bg-darker/50 rounded-lg hover:bg-darker/70 transition-colors">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fa fa-play-circle text-primary"></i>
+                                        <span class="text-light">Getting Started Video (5 min)</span>
+                                    </div>
+                                </a>
+                                <a href="#" class="block p-3 bg-darker/50 rounded-lg hover:bg-darker/70 transition-colors">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fa fa-book text-secondary"></i>
+                                        <span class="text-light">User Manual (PDF)</span>
+                                    </div>
+                                </a>
+                                <a href="#" class="block p-3 bg-darker/50 rounded-lg hover:bg-darker/70 transition-colors">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fa fa-keyboard-o text-accent"></i>
+                                        <span class="text-light">Keyboard Shortcuts</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-semibold text-secondary">Advanced Tutorials</h3>
+                            <div class="space-y-3">
+                                <a href="#" class="block p-3 bg-darker/50 rounded-lg hover:bg-darker/70 transition-colors">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fa fa-graduation-cap text-primary"></i>
+                                        <span class="text-light">Advanced Annotation Techniques</span>
+                                    </div>
+                                </a>
+                                <a href="#" class="block p-3 bg-darker/50 rounded-lg hover:bg-darker/70 transition-colors">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fa fa-cogs text-secondary"></i>
+                                        <span class="text-light">Workflow Optimization</span>
+                                    </div>
+                                </a>
+                                <a href="#" class="block p-3 bg-darker/50 rounded-lg hover:bg-darker/70 transition-colors">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fa fa-puzzle-piece text-accent"></i>
+                                        <span class="text-light">Plugin Development</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 系统要求 -->
+            <section class="mb-12">
+                <div class="bg-dark/50 rounded-xl p-8 border border-primary/20">
+                    <h2 class="text-2xl font-semibold mb-6 text-primary">💻 System Requirements</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4 text-secondary">Minimum Requirements</h3>
+                            <ul class="space-y-2 text-light/80">
+                                <li><i class="fa fa-check text-primary mr-2"></i> 8 GB RAM</li>
+                                <li><i class="fa fa-check text-primary mr-2"></i> 2 GB free disk space</li>
+                                <li><i class="fa fa-check text-primary mr-2"></i> DirectX 11 compatible GPU</li>
+                                <li><i class="fa fa-check text-primary mr-2"></i> 1920x1080 display</li>
+                                <li><i class="fa fa-check text-primary mr-2"></i> Dual-core processor</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4 text-secondary">Recommended</h3>
+                            <ul class="space-y-2 text-light/80">
+                                <li><i class="fa fa-star text-accent mr-2"></i> 16 GB+ RAM</li>
+                                <li><i class="fa fa-star text-accent mr-2"></i> 5 GB free disk space</li>
+                                <li><i class="fa fa-star text-accent mr-2"></i> Dedicated GPU with 4GB+ VRAM</li>
+                                <li><i class="fa fa-star text-accent mr-2"></i> 2560x1440+ display</li>
+                                <li><i class="fa fa-star text-accent mr-2"></i> Multi-core processor</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 支持和反馈 -->
+            <section>
+                <div class="bg-dark/50 rounded-xl p-8 border border-primary/20">
+                    <h2 class="text-2xl font-semibold mb-6 text-primary">🤝 Support & Feedback</h2>
+                    
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-primary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <i class="fa fa-bug text-primary text-2xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-light mb-2">Report Issues</h3>
+                            <p class="text-sm text-light/70 mb-4">Found a bug? Let us know!</p>
+                            <a href="#" class="inline-flex items-center px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 rounded-lg transition-colors">
+                                Report Bug
+                            </a>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-secondary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <i class="fa fa-lightbulb-o text-secondary text-2xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-light mb-2">Feature Request</h3>
+                            <p class="text-sm text-light/70 mb-4">Suggest new features</p>
+                            <a href="#" class="inline-flex items-center px-4 py-2 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 rounded-lg transition-colors">
+                                Request Feature
+                            </a>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <i class="fa fa-question-circle text-accent text-2xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-light mb-2">Get Help</h3>
+                            <p class="text-sm text-light/70 mb-4">Need assistance?</p>
+                            <a href="#" class="inline-flex items-center px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 rounded-lg transition-colors">
+                                Contact Support
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="py-8 px-4 bg-dark border-t border-primary/10">
+        <div class="max-w-6xl mx-auto text-center">
+            <p class="text-light/60 text-sm">© 2025 OpenHOI Project. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

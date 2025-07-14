@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Upload - OpenHOI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#00CFFD',
+                        accent: '#7B61FF',
+                        dark: '#0F172A',
+                        darker: '#0A0F1C',
+                        light: '#E2E8F0'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .gradient-bg {
+                background: linear-gradient(135deg, #0A0F1C 0%, #131F3A 50%, #0A0F1C 100%);
+            }
+        }
+    </style>
+</head>
+<body class="gradient-bg text-light overflow-x-hidden font-sans">
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-darker/95 backdrop-blur-md border-b border-primary/20">
+        <div class="max-w-6xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <a href="test.html" class="text-xl font-bold text-primary">OpenHOI</a>
+                    <span class="text-light/60">|</span>
+                    <span class="text-light/80">Data Upload</span>
+                </div>
+                <a href="test.html" class="text-light/80 hover:text-primary transition-colors">
+                    <i class="fa fa-arrow-left mr-2"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="pt-24 pb-12">
+        <div class="max-w-4xl mx-auto px-4">
+            <!-- 页面标题 -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+                    Data Upload
+                </h1>
+                <p class="text-xl text-light/80">
+                    Upload your video data for 4D HOI annotation processing
+                </p>
+            </div>
+
+            <!-- 使用说明 -->
+            <section class="mb-12">
+                <div class="bg-dark/50 rounded-xl p-8 border border-primary/20">
+                    <h2 class="text-2xl font-semibold mb-6 text-primary">📋 Usage Instructions</h2>
+                    
+                    <div class="mb-8">
+                        <p class="text-lg text-light/90 mb-6">This is a data upload tool for 4D human-object interaction annotation.</p>
+                        
+                        <h3 class="text-xl font-semibold mb-4 text-secondary">📝 Data Requirements</h3>
+                        <ul class="space-y-3 text-light/80 mb-8">
+                            <li class="flex items-start space-x-3">
+                                <div class="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <span class="text-primary text-sm font-bold">1</span>
+                                </div>
+                                <span>Contains at least one pair of human-object interactions</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <div class="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <span class="text-primary text-sm font-bold">2</span>
+                                </div>
+                                <span>Third-person perspective video, preferably showing complete human body</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <div class="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <span class="text-primary text-sm font-bold">3</span>
+                                </div>
+                                <span>Video resolution should not be too low, objects should be clearly visible</span>
+                            </li>
+                        </ul>
+
+                        <h3 class="text-xl font-semibold mb-4 text-secondary">🔄 Two Upload Methods</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="bg-darker/50 rounded-lg p-6">
+                                <h4 class="text-lg font-semibold mb-3 text-accent flex items-center">
+                                    <i class="fa fa-globe mr-2"></i> Method 1: Online Videos
+                                </h4>
+                                <p class="text-light/70 mb-3">Obtain videos from platforms like TikTok, Bilibili, YouTube, etc.</p>
+                                <p class="text-sm text-light/60"><strong>Required:</strong> Upload both video file and video link</p>
+                            </div>
+                            
+                            <div class="bg-darker/50 rounded-lg p-6">
+                                <h4 class="text-lg font-semibold mb-3 text-accent flex items-center">
+                                    <i class="fa fa-camera mr-2"></i> Method 2: Self-recorded Videos
+                                </h4>
+                                <p class="text-light/70 mb-3">Videos shot with mobile phone or camera</p>
+                                <p class="text-sm text-light/60"><strong>Required:</strong> Upload video and multi-view images of the interacting objects. Also need some clicks.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4 text-secondary">📁 Supported Formats</h3>
+                            <ul class="space-y-2 text-light/80">
+                                <li><i class="fa fa-check text-primary mr-2"></i> MP4 (Recommended)</li>
+                                <li><i class="fa fa-check text-primary mr-2"></i> AVI</li>
+                                <li><i class="fa fa-check text-primary mr-2"></i> MOV</li>
+                                <li><i class="fa fa-check text-primary mr-2"></i> MKV</li>
+                                <li><i class="fa fa-check text-primary mr-2"></i> Maximum file size: 1GB</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4 text-secondary">⚡ Technical Requirements</h3>
+                            <ul class="space-y-2 text-light/80">
+                                <li><i class="fa fa-check text-primary mr-2"></i> Resolution: 480p or higher</li>
+                                <li><i class="fa fa-check text-primary mr-2"></i> Frame rate: 20-50 FPS</li>
+                                <li><i class="fa fa-check text-primary mr-2"></i> Duration: 10 seconds - 2 minutes</li>
+                                <li><i class="fa fa-check text-primary mr-2"></i> Clear human-object interactions</li>
+                                <li><i class="fa fa-check text-primary mr-2"></i> Good lighting conditions</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 标注工具访问方法 -->
+            <section class="mb-12">
+                <div class="bg-dark/50 rounded-xl p-8 border border-primary/20">
+                    <h2 class="text-2xl font-semibold mb-6 text-primary">🔧 How to Access Annotation Tool</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-darker/50 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold mb-4 text-secondary flex items-center">
+                                <i class="fa fa-shield mr-2"></i> Step 1: VPN Connection
+                            </h3>
+                            <p class="text-light/80 mb-3">First, you need to connect to SJTU VPN</p>
+                            <div class="bg-accent/10 border border-accent/20 rounded-lg p-3">
+                                <p class="text-accent text-sm">
+                                    <i class="fa fa-info-circle mr-2"></i>
+                                    <strong>Note:</strong> Non-SJTU users should contact the administrator separately
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="bg-darker/50 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold mb-4 text-secondary flex items-center">
+                                <i class="fa fa-terminal mr-2"></i> Step 2: SSH Connection
+                            </h3>
+                            <div class="space-y-3">
+                                <p class="text-light/80">1. Search "cmd" in Windows search bar to open Command Prompt</p>
+                                <p class="text-light/80">2. Enter the following command:</p>
+                                <div class="bg-darker border border-primary/20 rounded-lg p-4 font-mono text-sm relative">
+                                    <code id="sshCommand" class="text-primary">ssh -L 7866:127.0.0.1:7866 -p 26000 volunteer@202.120.47.58</code>
+                                    <button onclick="copySSHCommand()" class="absolute top-2 right-2 px-3 py-1 bg-primary/20 hover:bg-primary/30 text-primary rounded text-xs transition-colors">
+                                        <i class="fa fa-copy mr-1"></i> Copy
+                                    </button>
+                                </div>
+                                <p class="text-light/80">3. Enter the password (contact administrator for password)</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-darker/50 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold mb-4 text-secondary flex items-center">
+                                <i class="fa fa-globe mr-2"></i> Step 3: Access Tool
+                            </h3>
+                            <p class="text-light/80 mb-3">Open your local browser and navigate to:</p>
+                            <div class="bg-darker border border-secondary/20 rounded-lg p-4">
+                                <a href="http://localhost:7866" class="text-secondary font-mono text-lg hover:text-secondary/80 transition-colors">
+                                    localhost:7866
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 具体使用步骤 -->
+            <section class="mb-12">
+                <div class="bg-dark/50 rounded-xl p-8 border border-primary/20">
+                    <h2 class="text-2xl font-semibold mb-6 text-primary">📖 Step-by-Step Guide</h2>
+                    
+                    <!-- Step 0: Upload Mode Selection -->
+                    <div class="mb-10">
+                        <h3 class="text-xl font-semibold mb-6 text-secondary flex items-center">
+                            <span class="w-8 h-8 bg-secondary rounded-full flex items-center justify-center text-white font-bold mr-3">0</span>
+                            Upload Mode Selection
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div class="bg-darker/50 rounded-lg p-4">
+                                <h4 class="font-semibold text-light mb-2">Choose Your Upload Method</h4>
+                                <p class="text-light/70 text-sm mb-3">Select the appropriate upload mode based on your video source</p>
+                                <ul class="text-xs text-light/60 space-y-2">
+                                    <li><strong class="text-primary">• Online Video Mode:</strong> For videos from TikTok, YouTube, Bilibili, etc.</li>
+                                    <li><strong class="text-accent">• Self-recorded Mode:</strong> For videos you recorded yourself</li>
+                                    <li>• Each mode has different requirements and upload interfaces</li>
+                                    <li>• You can switch between modes anytime</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-darker/30 rounded-lg p-4 flex items-center justify-center">
+                                <div class="text-center">
+                                    <img src="static/upload/change.png" alt="Upload mode selection interface" class="max-w-full h-auto rounded-lg mb-2">
+                                    <p class="text-sm text-light/60">Upload mode selection interface</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Method 1: 网络视频 -->
+                    <div class="mb-10">
+                        <h3 class="text-xl font-semibold mb-6 text-secondary flex items-center">
+                            <span class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold mr-3">1</span>
+                            Online Video Upload
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <!-- Step 1.1: Full width -->
+                            <div class="bg-darker/50 rounded-lg p-4">
+                                <h4 class="font-semibold text-light mb-2">Step 1.1: Find Video</h4>
+                                <p class="text-light/70 text-sm mb-3">Search for suitable videos on TikTok, Bilibili, YouTube</p>
+                                <ul class="text-xs text-light/60 space-y-1">
+                                    <li>• Look for clear human-object interactions</li>
+                                    <li>• Ensure good video quality</li>
+                                    <li>• Check duration requirements</li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Step 1.2: Full width -->
+                            <div class="bg-darker/50 rounded-lg p-4">
+                                <h4 class="font-semibold text-light mb-2">Step 1.2: Upload Process</h4>
+                                <p class="text-light/70 text-sm mb-3">Upload both video file and provide link</p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fa fa-upload text-primary text-sm"></i>
+                                        <span class="text-xs text-light/70">Upload video file</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fa fa-link text-secondary text-sm"></i>
+                                        <span class="text-xs text-light/70">Paste original video URL</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Image demonstration -->
+                            <div class="bg-darker/30 rounded-lg p-4 flex items-center justify-center">
+                                <div class="text-center">
+                                    <img src="static/upload/web1.jpg" alt="Online video upload interface" class="max-w-full h-auto rounded-lg mb-2">
+                                    <p class="text-sm text-light/60">Online video upload interface</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Method 2: 自己上传视频 -->
+                    <div>
+                        <h3 class="text-xl font-semibold mb-6 text-secondary flex items-center">
+                            <span class="w-8 h-8 bg-accent rounded-full flex items-center justify-center text-white font-bold mr-3">2</span>
+                            Self-recorded Video Upload
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <!-- Step 2.1: Full width -->
+                            <div class="bg-darker/50 rounded-lg p-4">
+                                <h4 class="font-semibold text-light mb-2">Step 2.1: Video Recording</h4>
+                                <p class="text-light/70 text-sm mb-3">Record video with mobile phone or camera</p>
+                                <ul class="text-xs text-light/60 space-y-1">
+                                    <li>• Use third-person perspective</li>
+                                    <li>• Include complete human body</li>
+                                    <li>• Ensure good lighting</li>
+                                    <li>• Focus on clear interactions</li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Step 2.2: Full width -->
+                            <div class="bg-darker/50 rounded-lg p-4">
+                                <h4 class="font-semibold text-light mb-2">Step 2.2: Object Photos</h4>
+                                <p class="text-light/70 text-sm mb-3">Take multi-view photos of interacting objects</p>
+                                <div class="grid grid-cols-4 gap-2 text-xs text-light/60">
+                                    <div>• Front view</div>
+                                    <div>• Back view</div>
+                                    <div>• Left side</div>
+                                    <div>• Right side</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 2.3: Upload demonstration -->
+                            <div class="bg-darker/50 rounded-lg p-4">
+                                <h4 class="font-semibold text-light mb-2">Step 2.3: Upload Files</h4>
+                                <p class="text-light/70 text-sm mb-4">Upload videos and multi-view object images to their corresponding positions by dragging and dropping or selecting files, as shown in the video below</p>
+                                
+                                <div class="bg-darker/30 rounded-lg p-4 flex items-center justify-center">
+                                    <div class="text-center w-full">
+                                        <video 
+                                            src="static/upload/upload1.mp4" 
+                                            autoplay 
+                                            loop 
+                                            muted 
+                                            class="max-w-full h-auto rounded-lg mb-2"
+                                            style="max-height: 400px;">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                        <p class="text-sm text-light/60">Upload process demonstration</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 2.4: Object mask annotation -->
+                            <div class="bg-darker/50 rounded-lg p-4">
+                                <h4 class="font-semibold text-light mb-2">Step 2.4: Annotate Object Mask</h4>
+                                <p class="text-light/70 text-sm mb-4">Click on the uploaded multi-view object images to segment and annotate object masks, as demonstrated in the video below</p>
+                                
+                                <div class="bg-darker/30 rounded-lg p-4 flex items-center justify-center">
+                                    <div class="text-center w-full">
+                                        <video 
+                                            src="static/upload/upload2.mp4" 
+                                            autoplay 
+                                            loop 
+                                            muted 
+                                            class="max-w-full h-auto rounded-lg mb-2"
+                                            style="max-height: 400px;">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                        <p class="text-sm text-light/60">Object mask annotation demonstration</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            
+
+            <!-- 处理选项
+            <section class="mb-12">
+                <div class="bg-dark/50 rounded-xl p-8 border border-primary/20">
+                    <h2 class="text-2xl font-semibold mb-6 text-primary">⚙️ Processing Options</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-light/80 mb-2">Processing Quality</label>
+                                <select class="w-full bg-darker border border-primary/20 rounded-lg px-4 py-2 text-light">
+                                    <option>High Quality (Slower)</option>
+                                    <option selected>Standard (Recommended)</option>
+                                    <option>Fast (Lower Quality)</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-light/80 mb-2">Output Format</label>
+                                <select class="w-full bg-darker border border-primary/20 rounded-lg px-4 py-2 text-light">
+                                    <option selected>JSON + 3D Models</option>
+                                    <option>JSON Only</option>
+                                    <option>3D Models Only</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" class="w-4 h-4 text-primary bg-darker border-primary/20 rounded">
+                                <label class="text-light/80">Enable human pose estimation</label>
+                            </div>
+                            
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" class="w-4 h-4 text-primary bg-darker border-primary/20 rounded" checked>
+                                <label class="text-light/80">Extract object keypoints</label>
+                            </div>
+                            
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" class="w-4 h-4 text-primary bg-darker border-primary/20 rounded">
+                                <label class="text-light/80">Generate interaction heatmaps</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section> -->
+
+            <!-- 相关链接 -->
+            <section>
+                <div class="bg-dark/50 rounded-xl p-8 border border-primary/20">
+                    <h2 class="text-2xl font-semibold mb-6 text-primary">🔗 Related Resources</h2>
+                    
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <a href="reconstruction.html" class="block p-4 bg-darker/50 rounded-lg hover:bg-darker/70 transition-colors">
+                            <div class="text-center">
+                                <i class="fa fa-cogs text-2xl text-secondary mb-2"></i>
+                                <h3 class="font-semibold text-light">Reconstruction Pipeline</h3>
+                                <p class="text-sm text-light/70 mt-2">Try our complete reconstruction demo</p>
+                            </div>
+                        </a>
+                        
+                        <a href="annotation-tool.html" class="block p-4 bg-darker/50 rounded-lg hover:bg-darker/70 transition-colors">
+                            <div class="text-center">
+                                <i class="fa fa-download text-2xl text-accent mb-2"></i>
+                                <h3 class="font-semibold text-light">Annotation Tool</h3>
+                                <p class="text-sm text-light/70 mt-2">Download standalone annotation software</p>
+                            </div>
+                        </a>
+                        
+                        <a href="#" class="block p-4 bg-darker/50 rounded-lg hover:bg-darker/70 transition-colors">
+                            <div class="text-center">
+                                <i class="fa fa-book text-2xl text-primary mb-2"></i>
+                                <h3 class="font-semibold text-light">Documentation</h3>
+                                <p class="text-sm text-light/70 mt-2">Read detailed API documentation</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="py-8 px-4 bg-dark border-t border-primary/10">
+        <div class="max-w-6xl mx-auto text-center">
+            <p class="text-light/60 text-sm">© 2025 OpenHOI Project. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function copySSHCommand() {
+            const commandText = document.getElementById('sshCommand').textContent;
+            navigator.clipboard.writeText(commandText).then(function() {
+                // Change button text temporarily to show success
+                const button = event.target.closest('button');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="fa fa-check mr-1"></i> Copied!';
+                button.classList.add('bg-green-500/20', 'text-green-400');
+                button.classList.remove('bg-primary/20', 'text-primary');
+                
+                setTimeout(function() {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('bg-green-500/20', 'text-green-400');
+                    button.classList.add('bg-primary/20', 'text-primary');
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Failed to copy text: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = commandText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const button = event.target.closest('button');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="fa fa-check mr-1"></i> Copied!';
+                button.classList.add('bg-green-500/20', 'text-green-400');
+                button.classList.remove('bg-primary/20', 'text-primary');
+                
+                setTimeout(function() {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('bg-green-500/20', 'text-green-400');
+                    button.classList.add('bg-primary/20', 'text-primary');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

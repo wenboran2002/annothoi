@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reconstruction Pipeline - OpenHOI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#00CFFD',
+                        accent: '#7B61FF',
+                        dark: '#0F172A',
+                        darker: '#0A0F1C',
+                        light: '#E2E8F0'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .gradient-bg {
+                background: linear-gradient(135deg, #0A0F1C 0%, #131F3A 50%, #0A0F1C 100%);
+            }
+            .image-hover {
+                transition: transform 0.3s ease;
+                cursor: pointer;
+            }
+            .image-hover:hover {
+                transform: scale(1.05);
+            }
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.8);
+            }
+            .modal-content {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                max-width: 90%;
+                max-height: 90%;
+            }
+            .modal img {
+                width: 100%;
+                height: auto;
+                border-radius: 8px;
+            }
+            .close {
+                position: absolute;
+                top: 15px;
+                right: 35px;
+                color: #f1f1f1;
+                font-size: 40px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            .close:hover {
+                color: #00CFFD;
+            }
+        }
+    </style>
+</head>
+<body class="gradient-bg text-light overflow-x-hidden font-sans">
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-darker/95 backdrop-blur-md border-b border-primary/20">
+        <div class="max-w-6xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <a href="test.html" class="text-xl font-bold text-primary">OpenHOI</a>
+                    <span class="text-light/60">|</span>
+                    <span class="text-light/80">Reconstruction Pipeline</span>
+                </div>
+                <a href="test.html" class="text-light/80 hover:text-primary transition-colors">
+                    <i class="fa fa-arrow-left mr-2"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="pt-24 pb-12">
+        <div class="max-w-6xl mx-auto px-4">
+            <!-- 页面标题 -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+                    4D Reconstruction Pipeline
+                </h1>
+                <p class="text-xl text-light/80">
+                    Experience our complete pipeline from video to 4D HOI annotation
+                </p>
+            </div>
+
+            <!-- 重建工具访问方法 -->
+            <section class="mb-12">
+                <div class="bg-dark/50 rounded-xl p-8 border border-primary/20">
+                    <h2 class="text-2xl font-semibold mb-6 text-primary">🔧 How to Access Reconstruction Pipeline</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-darker/50 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold mb-4 text-secondary flex items-center">
+                                <i class="fa fa-shield mr-2"></i> Step 1: VPN Connection
+                            </h3>
+                            <p class="text-light/80 mb-3">First, you need to connect to SJTU VPN</p>
+                            <div class="bg-accent/10 border border-accent/20 rounded-lg p-3">
+                                <p class="text-accent text-sm">
+                                    <i class="fa fa-info-circle mr-2"></i>
+                                    <strong>Note:</strong> Non-SJTU users should contact the administrator separately
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="bg-darker/50 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold mb-4 text-secondary flex items-center">
+                                <i class="fa fa-terminal mr-2"></i> Step 2: SSH Connection
+                            </h3>
+                            <div class="space-y-3">
+                                <p class="text-light/80">1. Search "cmd" in Windows search bar to open Command Prompt</p>
+                                <p class="text-light/80">2. Enter the following command:</p>
+                                <div class="bg-darker border border-primary/20 rounded-lg p-4 font-mono text-sm relative">
+                                    <code id="sshCommandReconstruction" class="text-primary">ssh -L 7864:127.0.0.1:7864 -p 26000 volunteer@202.120.47.58</code>
+                                    <button onclick="copySSHCommandReconstruction()" class="absolute top-2 right-2 px-3 py-1 bg-primary/20 hover:bg-primary/30 text-primary rounded text-xs transition-colors">
+                                        <i class="fa fa-copy mr-1"></i> Copy
+                                    </button>
+                                </div>
+                                <p class="text-light/80">3. Enter the password (contact administrator for password)</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-darker/50 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold mb-4 text-secondary flex items-center">
+                                <i class="fa fa-globe mr-2"></i> Step 3: Access Pipeline
+                            </h3>
+                            <p class="text-light/80 mb-3">Open your local browser and navigate to:</p>
+                            <div class="bg-darker border border-secondary/20 rounded-lg p-4">
+                                <a href="http://localhost:7864" class="text-secondary font-mono text-lg hover:text-secondary/80 transition-colors">
+                                    localhost:7864
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 操作步骤指南 -->
+            <section class="mb-12">
+                <div class="bg-dark/50 rounded-xl p-8 border border-primary/20">
+                    <h2 class="text-2xl font-semibold mb-6 text-primary">📋 Step-by-Step Guide</h2>
+                    
+                    <!-- Step 1: Upload and Initial Segmentation -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-6 text-secondary flex items-center">
+                            <span class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold mr-3">1</span>
+                            Upload Video and Initial Segmentation
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div class="bg-darker/50 rounded-lg p-6">
+                                <h4 class="font-semibold text-light mb-3">Process Overview</h4>
+                                <div class="space-y-3 text-light/80">
+                                    <p><strong class="text-primary">1.</strong> Upload your video containing human-object interactions</p>
+                                    <p><strong class="text-primary">2.</strong> Input the object name for identification</p>
+                                    <p><strong class="text-primary">3.</strong> Select the starting frame for analysis</p>
+                                    <p><strong class="text-primary">4.</strong> Click on both the human and object in the first frame to obtain initial segmentation results</p>
+                                    <p><strong class="text-primary">5.</strong> Process the complete video to generate masks for the entire sequence</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-darker/30 rounded-lg p-6">
+                                <div class="text-center">
+                                    <video 
+                                        src="static/reconstruct/step1.mp4" 
+                                        autoplay 
+                                        loop 
+                                        muted 
+                                        class="max-w-full h-auto rounded-lg mb-3 mx-auto image-hover"
+                                        style="max-height: 400px;"
+                                        onclick="openModal(this)">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                    <p class="text-sm text-light/60">Initial segmentation process: Upload video, input object name, select starting frame, and click to segment human and object</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Frame Selection and 3D Reconstruction -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-6 text-secondary flex items-center">
+                            <span class="w-8 h-8 bg-secondary rounded-full flex items-center justify-center text-white font-bold mr-3">2</span>
+                            Frame Selection and 3D Reconstruction
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div class="bg-darker/50 rounded-lg p-6">
+                                <h4 class="font-semibold text-light mb-3">Process Overview</h4>
+                                <div class="space-y-3 text-light/80">
+                                    <p><strong class="text-secondary">1.</strong> Select the frame that is easiest to reconstruct (clear poses, good lighting, minimal occlusion)</p>
+                                    <p><strong class="text-secondary">2.</strong> Perform 3D reconstruction of both human and object in the selected frame</p>
+                                    <p><strong class="text-secondary">3.</strong> Optimize the 3D models for accurate geometry and pose estimation</p>
+                                    <p><strong class="text-secondary">4.</strong> Validate the reconstruction quality before proceeding to full sequence</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-darker/30 rounded-lg p-6">
+                                <div class="text-center">
+                                    <video 
+                                        src="static/reconstruct/step2.mp4" 
+                                        autoplay 
+                                        loop 
+                                        muted 
+                                        class="max-w-full h-auto rounded-lg mb-3 mx-auto image-hover"
+                                        style="max-height: 400px;"
+                                        onclick="openModal(this)">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                    <p class="text-sm text-light/60">Frame selection and 3D reconstruction: Choose optimal frame and perform initial 3D modeling</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Human Body and Hand Motion Estimation -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-6 text-secondary flex items-center">
+                            <span class="w-8 h-8 bg-accent rounded-full flex items-center justify-center text-white font-bold mr-3">3</span>
+                            Human Body and Hand Motion Estimation
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div class="bg-darker/50 rounded-lg p-6">
+                                <h4 class="font-semibold text-light mb-3">Process Overview</h4>
+                                <div class="space-y-3 text-light/80">
+                                    <p><strong class="text-accent">1.</strong> Estimate full body pose and motion parameters using SMPL-X model</p>
+                                    <p><strong class="text-accent">2.</strong> Perform detailed hand pose estimation and finger articulation tracking</p>
+                                    <p><strong class="text-accent">3.</strong> Track motion dynamics and temporal consistency across frames</p>
+                                    <p><strong class="text-accent">4.</strong> Refine motion estimation based on human-object interaction constraints</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-darker/30 rounded-lg p-6">
+                                <div class="text-center">
+                                    <video 
+                                        src="static/reconstruct/step3.mp4" 
+                                        autoplay 
+                                        loop 
+                                        muted 
+                                        class="max-w-full h-auto rounded-lg mb-3 mx-auto image-hover"
+                                        style="max-height: 400px;"
+                                        onclick="openModal(this)">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                    <p class="text-sm text-light/60">Human motion estimation: Full body pose tracking and detailed hand motion analysis</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Depth Estimation and Spatial Alignment -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-6 text-secondary flex items-center">
+                            <span class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold mr-3">4</span>
+                            Depth Estimation and Spatial Alignment
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div class="bg-darker/50 rounded-lg p-6">
+                                <h4 class="font-semibold text-light mb-3">Process Overview</h4>
+                                <div class="space-y-3 text-light/80">
+                                    <p><strong class="text-primary">1.</strong> Estimate depth information for accurate spatial positioning</p>
+                                    <p><strong class="text-primary">2.</strong> Perform spatial alignment between human and object models</p>
+                                    <p><strong class="text-primary">3.</strong> Represent object with spherical bounding representation indicating position and size</p>
+                                    <p><strong class="text-primary">4.</strong> Optimize 3D spatial relationships and contact constraints</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-darker/30 rounded-lg p-6">
+                                <div class="text-center">
+                                    <video 
+                                        src="static/reconstruct/step4.mp4" 
+                                        autoplay 
+                                        loop 
+                                        muted 
+                                        class="max-w-full h-auto rounded-lg mb-3 mx-auto image-hover"
+                                        style="max-height: 400px;"
+                                        onclick="openModal(this)">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                    <p class="text-sm text-light/60">Depth estimation and alignment: Spatial positioning with spherical object representation</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+
+            <!-- 技术特性 -->
+            <section class="mb-12">
+                <div class="bg-dark/50 rounded-xl p-8 border border-primary/20">
+                    <h2 class="text-2xl font-semibold mb-6 text-primary">⚡ Technical Features</h2>
+                    
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="p-4 bg-darker/50 rounded-lg">
+                            <div class="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fa fa-clock-o text-primary text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-light mb-2">Real-time Processing</h3>
+                            <p class="text-sm text-light/70">Process videos in near real-time with optimized algorithms</p>
+                        </div>
+
+                        <div class="p-4 bg-darker/50 rounded-lg">
+                            <div class="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fa fa-eye text-secondary text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-light mb-2">Interactive Visualization</h3>
+                            <p class="text-sm text-light/70">3D visualization with interactive controls and annotations</p>
+                        </div>
+
+                        <div class="p-4 bg-darker/50 rounded-lg">
+                            <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fa fa-magic text-accent text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-light mb-2">Auto-annotation</h3>
+                            <p class="text-sm text-light/70">Automatic keypoint detection with manual refinement</p>
+                        </div>
+
+                        <div class="p-4 bg-darker/50 rounded-lg">
+                            <div class="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fa fa-download text-primary text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-light mb-2">Export Options</h3>
+                            <p class="text-sm text-light/70">Multiple export formats including JSON, OBJ, FBX</p>
+                        </div>
+
+                        <div class="p-4 bg-darker/50 rounded-lg">
+                            <div class="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fa fa-cloud text-secondary text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-light mb-2">Cloud Processing</h3>
+                            <p class="text-sm text-light/70">GPU-accelerated cloud processing for complex scenes</p>
+                        </div>
+
+                        <div class="p-4 bg-darker/50 rounded-lg">
+                            <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fa fa-code text-accent text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-light mb-2">API Access</h3>
+                            <p class="text-sm text-light/70">RESTful API for integration with your applications</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 示例结果 -->
+            <section class="mb-12">
+                <div class="bg-dark/50 rounded-xl p-8 border border-primary/20">
+                    <h2 class="text-2xl font-semibold mb-6 text-primary">📈 Example Results</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-darker/50 rounded-lg p-4">
+                            <div class="aspect-video bg-darker rounded mb-4 flex items-center justify-center">
+                                <video 
+                                    src="static/reconstruct/org1.mp4" 
+                                    autoplay 
+                                    loop 
+                                    muted 
+                                    class="w-full h-full object-cover rounded image-hover"
+                                    onclick="openModal(this)">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <h3 class="font-semibold text-light mb-2">Original Video</h3>
+                            <p class="text-sm text-light/70">Input video showing human-object interaction</p>
+                        </div>
+
+                        <div class="bg-darker/50 rounded-lg p-4">
+                            <div class="aspect-video bg-darker rounded mb-4 flex items-center justify-center">
+                                <video 
+                                    src="static/reconstruct/rec1.mp4" 
+                                    autoplay 
+                                    loop 
+                                    muted 
+                                    class="w-full h-full object-cover rounded image-hover"
+                                    onclick="openModal(this)">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <h3 class="font-semibold text-light mb-2">4D Reconstruction</h3>
+                            <p class="text-sm text-light/70">Complete 4D model with annotations</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 使用链接 -->
+            <section>
+                <div class="bg-dark/50 rounded-xl p-8 border border-primary/20">
+                    <h2 class="text-2xl font-semibold mb-6 text-primary">🚀 Get Started</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="text-center">
+                            <div class="mb-4">
+                                <i class="fa fa-upload text-4xl text-primary"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-light mb-2">Upload Your Data</h3>
+                            <p class="text-light/70 mb-4">Start by uploading your video data for processing</p>
+                            <a href="upload.html" class="inline-flex items-center px-6 py-3 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors">
+                                Upload Videos <i class="fa fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="mb-4">
+                                <i class="fa fa-download text-4xl text-accent"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-light mb-2">Download Tools</h3>
+                            <p class="text-light/70 mb-4">Get our annotation tools for offline processing</p>
+                            <a href="annotation-tool.html" class="inline-flex items-center px-6 py-3 bg-accent hover:bg-accent/80 text-white rounded-lg transition-colors">
+                                Download Tools <i class="fa fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Image/Video Modal -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div class="modal-content">
+            <img id="modalImg" src="" alt="" style="display: none;">
+            <video id="modalVideo" controls loop style="display: none; width: 100%; height: auto; border-radius: 8px;">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="py-8 px-4 bg-dark border-t border-primary/10">
+        <div class="max-w-6xl mx-auto text-center">
+            <p class="text-light/60 text-sm">© 2025 OpenHOI Project. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function copySSHCommandReconstruction() {
+            const commandText = document.getElementById('sshCommandReconstruction').textContent;
+            navigator.clipboard.writeText(commandText).then(function() {
+                // Change button text temporarily to show success
+                const button = event.target.closest('button');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="fa fa-check mr-1"></i> Copied!';
+                button.classList.add('bg-green-500/20', 'text-green-400');
+                button.classList.remove('bg-primary/20', 'text-primary');
+                
+                setTimeout(function() {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('bg-green-500/20', 'text-green-400');
+                    button.classList.add('bg-primary/20', 'text-primary');
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Failed to copy text: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = commandText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const button = event.target.closest('button');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="fa fa-check mr-1"></i> Copied!';
+                button.classList.add('bg-green-500/20', 'text-green-400');
+                button.classList.remove('bg-primary/20', 'text-primary');
+                
+                setTimeout(function() {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('bg-green-500/20', 'text-green-400');
+                    button.classList.add('bg-primary/20', 'text-primary');
+                }, 2000);
+            });
+        }
+
+        function openModal(element) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            const modalVideo = document.getElementById('modalVideo');
+            
+            modal.style.display = 'block';
+            
+            if (element.tagName.toLowerCase() === 'video') {
+                modalVideo.src = element.src;
+                modalVideo.style.display = 'block';
+                modalImg.style.display = 'none';
+                modalVideo.play();
+            } else {
+                modalImg.src = element.src;
+                modalImg.alt = element.alt;
+                modalImg.style.display = 'block';
+                modalVideo.style.display = 'none';
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            const modalVideo = document.getElementById('modalVideo');
+            modal.style.display = 'none';
+            modalVideo.pause();
+            modalVideo.src = '';
+        }
+
+        // Close modal when clicking outside of image
+        window.onclick = function(event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
